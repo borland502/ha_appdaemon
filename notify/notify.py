@@ -13,7 +13,7 @@ from simhash import Simhash
 #
 
 HOST_NAME = "192.168.2.6"
-HOST_PORT = 80
+HOST_PORT = 8123
 
 ENDPOINT_MSG = "notify"
 BROADCAST_GRP = "Home group"
@@ -42,7 +42,7 @@ class Notify(hass.Hass):
             notification = "No+Notification+Data+Received"
 
         mp3 = DOCKER_CONFIG_DIR + "/www/audio/appdaemon/" + str(Simhash(notification).value) + ".mp3"
-        mp3_url = "http://" + HOST_NAME + "/local/audio/appdaemon/" + str(Simhash(notification).value) + ".mp3"
+        mp3_url = "http://" + HOST_NAME + ":" + str(HOST_PORT) + "/local/audio/appdaemon/" + str(Simhash(notification).value) + ".mp3"
         self.log(mp3)
         self.log(mp3_url)
         text = notification.replace("+", " ")
@@ -74,14 +74,6 @@ class Notify(hass.Hass):
         mc = cast.media_controller
         mc.play_media(mp3_url, "audio/mp3")
         mc.block_until_active()
-        # castdevice = next(cc for cc in self.chromecasts[0] if cc.device.model_name == "Google Home" or
-        #                   cc.device.model_name == "Google Home Mini" or cc.device.model_name == "Google Nest Hub")
-        # castdevice.wait()
-        # mediacontroller = castdevice.media_controller  # ChromeCast Specific
-        # url = "http://" + ip_add + "/" + mp3
-        # print(url)
-        # mediacontroller.play_media(url, 'audio/mp3')
-        # return
 
     def terminate(self):
         self.unregister_endpoint(self.handle_request)

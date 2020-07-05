@@ -1,10 +1,9 @@
 import appdaemon.plugins.hass.hassapi as hass
-import pychromecast
-import time
-import json
-import socket
 import os.path
+import pychromecast
 from gtts import gTTS
+from simhash import Simhash
+
 
 #
 # Notify
@@ -13,73 +12,60 @@ from gtts import gTTS
 #
 # Args:
 #
-
-HOST_NAME = "192.168.2.6"
-HOST_PORT = 80
-
-MP3_CACHE_DIR = "mp3_cache"
-ENDPOINT = 'notify'
-
-
 class Notify(hass.Hass):
 
     def initialize(self):
-        self.log("Initializing endpoint")
-        self.register_endpoint(self.handle_request, "notify")
+        self.log(f"Initializing Notify endpoint with args {self.args}")
+        self.register_endpoint(self.handle_request, self.args['endpoint'])
 
-        self.log("Getting chromecasts...")
-        # noinspection PyAttributeOutsideInit
-        self.chromecasts = pychromecast.get_chromecasts()
-
-        if not os.path.exists(MP3_CACHE_DIR):
-            os.makedirs(MP3_CACHE_DIR)
+        if not os.path.exists(self.args['tts_cache_dir']):
+            os.makedirs(self.args['tts_cache_dir'])
 
     def handle_request(self, data):
         self.log(data)
 
-        self.notify(str(data["message"]))
+        self.notify(str(data['message']))
 
-        return 200
+        return None, 200
 
     def notify(self, notification):
-        if notification == "":
-            notification = "No+Notification+Data+Received"
+        if notification == '':
+            notification = 'No+Notification+Data+Received'
 
-        mp3 = MP3_CACHE_DIR + "/" + notification.replace("+", "_") + ".mp3"
+        mp3_file_hash = str(Simhash(notification).value)
+        mp3 = f"{self.args['tts_cache_dir']}/{mp3_file_hash}.mp3"
+        mp3_url = f"http://{self.args['host_name']}{self.args['tts_www_dir']}/{mp3_file_hash}.mp3"
+
         text = notification.replace("+", " ")
 
         if not os.path.isfile(mp3):
-            self.log("Generating MP3...")
+            self.log('Generating MP3...')
             tts = gTTS(text=text,
-                       lang='en-us')  # See Google TTS API for more Languages (Note: This may do translation Also - Needs Testing)
+                       lang='en-us')
+            # save mp3 file to the HA config directory
             tts.save(mp3)
         else:
-            self.log("Reusing MP3...")
+            self.log('Reusing MP3...')
 
-        self.log("Sending notification...")
-        s = socket.socket(socket.AF_INET,
-                          socket.SOCK_DGRAM)  # Pull IP Address for Local HTTP File Serving (Note: This requires an internet connection)
-        s.connect(("192.168.2.3", 80))
-        ip_add = s.getsockname()[0]
-        self.log(ip_add)
-        s.close()
-        self.Cast(ip_add, mp3)
+        self.cast(mp3_url)
 
-        self.log("Notification Sent.")
+        self.log('Notification Sent.')
 
-        return
+    def cast(self, mp3):
 
-    def Cast(self, ip_add, mp3):
-        for cc in self.chromecasts:
-            self.log(cc)
-        castdevice = next(cc for cc in self.chromecasts[0] if cc.device.model_name == "Google Home" or
-                          cc.device.model_name == "Google Home Mini" or cc.device.model_name == "Google Nest Hub")
-        castdevice.wait()
-        mediacontroller = castdevice.media_controller  # ChromeCast Specific
-        url = "http://" + ip_add + "/" + mp3
-        print(url)
-        mediacontroller.play_media(url, 'audio/mp3')
-        return
+        casts, browser = pychromecast.get_listed_chromecasts(friendly_names=[self.args['broadcast_grp']])
+        # Shut down discovery as we don't care about updates
+        pychromecast.discovery.stop_discovery(browser)
+
+        if len(casts) == 0:
+            self.log('No Devices Found')
+
+        cast = casts[0]
+        cast.wait()
+
+        mc = cast.media_controller
+        mc.play_media(mp3, 'audio/mp3')
+        mc.block_until_active()
 
     def terminate(self):
         self.unregister_endpoint(self.handle_request)

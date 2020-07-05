@@ -1,3 +1,8 @@
 notify:
   module: notify
   class: Notify
+  host_name: "192.168.2.6:8123"
+  endpoint: "notify"
+  broadcast_grp: "Home group"
+  tts_cache_dir: "/config/www/audio/appdaemon"
+  tts_www_dir: "/local/audio/appdaemon"

@@ -1,0 +1,3 @@
+light:
+  module: light
+  class: Light

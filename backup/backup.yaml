@@ -1,0 +1,3 @@
+backup:
+  module: backup
+  class: Backup

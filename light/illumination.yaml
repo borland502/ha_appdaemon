@@ -1,0 +1,17 @@
+dining_room_sensor:
+  module: illumination
+  class: MotionActivatedLights
+  sensor: sensor.illumination_158d0002ed890d
+  entity: light.dining_room_chandelier
+  event_name: state_changed
+  event_entity: binary_sensor.motion_sensor_158d0002ed890d
+  threshold: 150
+
+living_room_sensor:
+  module: illumination
+  class: MotionActivatedLights
+  sensor: sensor.illumination_158d0003140d17
+  entity: light.family_room_fan_light
+  event_name: state_changed
+  event_entity: binary_sensor.motion_sensor_158d0003140d17
+  threshold: 150

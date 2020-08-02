@@ -35,8 +35,7 @@ class Notify(hass.Hass):
         mp3_file_hash = str(Simhash(notification).value)
         mp3 = f"{self.args['tts_cache_dir']}/{mp3_file_hash}.mp3"
         mp3_url = f"http://{self.args['host_name']}{self.args['tts_www_dir']}/{mp3_file_hash}.mp3"
-        self.log(mp3)
-        self.log(mp3_url)
+
         text = notification.replace("+", " ")
 
         if not os.path.isfile(mp3):

@@ -1,0 +1,4 @@
+backup:
+  module: backup
+  class: Backup
+  speaker: !secret hallway

@@ -1,0 +1,4 @@
+pushbullet:
+  module: pushbullet
+  class: Pushbullet
+  api_key: !secret jhettenh_pushbullet_key

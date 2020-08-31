@@ -3,6 +3,12 @@ notify:
   class: Notify
   host_name: "192.168.2.6:8123"
   endpoint: "notify"
-  broadcast_grp: "Home group"
+  broadcast_grp: !secret home_group
   tts_cache_dir: "/config/www/audio/appdaemon"
   tts_www_dir: "/local/audio/appdaemon"
+  speakers:
+    foyer: !secret foyer
+    cq: !secret cq
+    family_room: !secret family_room
+    kitchen: !secret kitchen
+    hallway: !secret hallway

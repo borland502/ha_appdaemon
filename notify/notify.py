@@ -1,5 +1,6 @@
-import appdaemon.plugins.hass.hassapi as hass
 import os.path
+
+import appdaemon.plugins.hass.hassapi as hass
 import pychromecast
 from gtts import gTTS
 from simhash import Simhash
@@ -15,22 +16,22 @@ from simhash import Simhash
 class Notify(hass.Hass):
 
     def initialize(self):
-        self.log(f"Initializing Notify endpoint with args {self.args}")
         self.register_endpoint(self.handle_request, self.args['endpoint'])
 
         if not os.path.exists(self.args['tts_cache_dir']):
             os.makedirs(self.args['tts_cache_dir'])
 
     def handle_request(self, data):
-        self.log(data)
-
-        self.notify(str(data['message']))
+        self.notify(str(data['message']), data['uuid'])
 
         return None, 200
 
-    def notify(self, notification):
-        if notification == '':
+    def notify(self, notification=None, target_speaker=None):
+        if notification is None:
             notification = 'No+Notification+Data+Received'
+
+        if target_speaker is None:
+            target_speaker = self.args['broadcast_grp']
 
         mp3_file_hash = str(Simhash(notification).value)
         mp3 = f"{self.args['tts_cache_dir']}/{mp3_file_hash}.mp3"
@@ -47,25 +48,27 @@ class Notify(hass.Hass):
         else:
             self.log('Reusing MP3...')
 
-        self.cast(mp3_url)
+        speakers = self.args['speakers']
+        self.cast(mp3_url, speakers[target_speaker])
 
         self.log('Notification Sent.')
 
-    def cast(self, mp3):
-
-        casts, browser = pychromecast.get_listed_chromecasts(friendly_names=[self.args['broadcast_grp']])
+    def cast(self, mp3, target_speaker):
+        casts, browser = pychromecast.get_chromecasts()
         # Shut down discovery as we don't care about updates
         pychromecast.discovery.stop_discovery(browser)
 
         if len(casts) == 0:
             self.log('No Devices Found')
 
-        cast = casts[0]
-        cast.wait()
+        for cast in casts:
+            if str(cast.uuid) == target_speaker:
+                cast.wait()
 
-        mc = cast.media_controller
-        mc.play_media(mp3, 'audio/mp3')
-        mc.block_until_active()
+                mc = cast.media_controller
+                mc.play_media(mp3, 'audio/mp3')
+                mc.block_until_active()
+                break
 
     def terminate(self):
         self.unregister_endpoint(self.handle_request)

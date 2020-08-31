@@ -1,0 +1,15 @@
+dining_room_sensor:
+  module: illumination
+  class: LumenActivatedLights
+  sensor: sensor.illumination_158d0002ed890d
+  entity: light.dining_room_chandelier
+  threshold: 150
+  speaker: cq
+
+living_room_sensor:
+  module: illumination
+  class: LumenActivatedLights
+  sensor: sensor.illumination_158d0003140d17
+  entity: light.family_room_fan_light
+  threshold: 150
+  speaker: cq

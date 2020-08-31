@@ -1,0 +1,5 @@
+status:
+  module: status
+  class: OfflineCheck
+  entities:
+    - light.dining_rm_hall

@@ -1,0 +1,7 @@
+hvac_schedule:
+  module: hvac
+  class: HvacSchedule
+  speaker: cq
+  entities:
+    - switch.bedroom_ac
+    - climate.entryway

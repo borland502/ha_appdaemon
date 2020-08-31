@@ -1,0 +1,7 @@
+ping3
+pychromecast
+gtts
+simhash
+asyncpushbullet
+appdaemon
+zeroconf

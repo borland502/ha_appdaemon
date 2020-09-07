@@ -15,19 +15,21 @@ from simhash import Simhash
 #
 class Notify(hass.Hass):
 
-    def initialize(self):
-        self.register_endpoint(self.handle_request, self.args['endpoint'])
+    async def initialize(self):
+        self.casts, self.browser = pychromecast.get_chromecasts()
+
+        await self.register_endpoint(self.handle_request, self.args['endpoint'])
 
         if not os.path.exists(self.args['tts_cache_dir']):
             os.makedirs(self.args['tts_cache_dir'])
 
-    def handle_request(self, data):
+    async def handle_request(self, data):
         uuid = data.setdefault('uuid', None)
-        self.notify(str(data['message']), uuid)
+        await self.notify(str(data['message']), uuid)
 
         return None, 200
 
-    def notify(self, notification=None, target_speaker=None):
+    async def notify(self, notification=None, target_speaker=None):
         if notification is None:
             notification = 'No+Notification+Data+Received'
 
@@ -49,19 +51,16 @@ class Notify(hass.Hass):
         else:
             self.log('Reusing MP3...')
 
-        self.cast(mp3_url, target_speaker)
+        await self.cast(mp3_url, target_speaker)
 
         self.log('Notification Sent.')
 
-    def cast(self, mp3, target_speaker):
-        casts, browser = pychromecast.get_chromecasts()
-        # Shut down discovery as we don't care about updates
-        pychromecast.discovery.stop_discovery(browser)
+    async def cast(self, mp3, target_speaker):
 
-        if len(casts) == 0:
+        if len(self.casts) == 0:
             self.log('No Devices Found')
 
-        for cast in casts:
+        for cast in self.casts:
             if str(cast.uuid) == target_speaker:
                 cast.wait()
 
@@ -70,5 +69,7 @@ class Notify(hass.Hass):
                 mc.block_until_active()
                 break
 
-    def terminate(self):
-        self.unregister_endpoint(self.handle_request)
+    async def terminate(self):
+        await self.unregister_endpoint(self.handle_request)
+        self.casts = None
+        self.browser = None

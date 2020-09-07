@@ -69,7 +69,8 @@ class Notify(hass.Hass):
                 mc.block_until_active()
                 break
 
-    async def terminate(self):
-        await self.unregister_endpoint(self.handle_request)
+    def terminate(self):
+        self.unregister_endpoint(self.handle_request)
+        pychromecast.discovery.stop_discovery(self.browser)
         self.casts = None
         self.browser = None

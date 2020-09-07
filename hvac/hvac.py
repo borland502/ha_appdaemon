@@ -1,5 +1,6 @@
-import appdaemon.plugins.hass.hassapi as hass
 import datetime
+
+import appdaemon.plugins.hass.hassapi as hass
 
 
 class HvacSchedule(hass.Hass):
@@ -7,7 +8,7 @@ class HvacSchedule(hass.Hass):
     # initialize() function which will be called at startup and reload
     def initialize(self):
 
-        time = datetime.time(20, 44, 0)
+        time = datetime.time(20, 0, 0)
         # Schedule a daily callback that will call run_daily() at 10:44 pm every night
         self.run_daily(self.turn_unit_on_c, time)
 

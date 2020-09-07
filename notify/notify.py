@@ -22,7 +22,8 @@ class Notify(hass.Hass):
             os.makedirs(self.args['tts_cache_dir'])
 
     def handle_request(self, data):
-        self.notify(str(data['message']), data['uuid'])
+        uuid = data.setdefault('uuid', None)
+        self.notify(str(data['message']), uuid)
 
         return None, 200
 
@@ -48,8 +49,7 @@ class Notify(hass.Hass):
         else:
             self.log('Reusing MP3...')
 
-        speakers = self.args['speakers']
-        self.cast(mp3_url, speakers[target_speaker])
+        self.cast(mp3_url, target_speaker)
 
         self.log('Notification Sent.')
 

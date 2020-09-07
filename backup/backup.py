@@ -18,7 +18,7 @@ class Backup(hass.Hass):
                 self.log('Home assistant is down')
 
                 # don't wake us up in the middle of night, or the kids
-                if not self.now_is_between("09:00:00", "09:00:00"):
+                if not self.now_is_between("00:00:00", "09:00:00"):
                     return
 
                 # noinspection PyUnresolvedReferences

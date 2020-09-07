@@ -10,5 +10,6 @@ notify:
     foyer: !secret foyer
     cq: !secret cq
     family_room: !secret family_room
-    kitchen: !secret kitchen
+    kitchen: !secret kitchen_display
     hallway: !secret hallway
+    foyer_display: !secret foyer_display

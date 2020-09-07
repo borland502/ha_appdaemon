@@ -16,8 +16,8 @@ class LumenActivatedLights(hass.Hass):
 
     def check_lumen(self, kwargs):
 
-        # Motion activate lights only during dim parts of the day / evening
-        if not self.now_is_between("11:00:00", "00:00:00"):
+        # activate lights only during dim parts of the day / evening
+        if not self.now_is_between("11:00:00", "23:29:00"):
             return
 
         sensor_state = int(self.get_state(self.sensor))

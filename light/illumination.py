@@ -22,7 +22,7 @@ class LumenActivatedLights(hass.Hass):
         sensor_state = int(self.get_state(self.sensor))
         self.log(f"{self.sensor} is at {sensor_state}")
 
-        self.notify(f"{self.sensor} is at {sensor_state}", title='appdaemon: illumination', name='pushbullet')
+        # self.notify(f"{self.sensor} is at {sensor_state}", title='appdaemon: illumination', name='pushbullet')
 
         # if the light exceeds the illumination threshold, then turn off.  Otherwise, turn on
         if self.get_state(self.entity) == "on":

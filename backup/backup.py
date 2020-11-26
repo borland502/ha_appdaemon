@@ -6,6 +6,7 @@ class Backup(hass.Hass):
 
     def initialize(self):
         self.log('initializing backup script')
+        self.notify('initializing backup script', title='appdaemon: Backup', name='pushbullet')
         self.run_every(self.check_primary, "now", 5 * 60)
 
     def check_primary(self, kwargs):
@@ -22,7 +23,8 @@ class Backup(hass.Hass):
                     return
 
                 # noinspection PyUnresolvedReferences
-                self.get_app('notify').notify('Home assistant is down', self.args['speaker'])
+                # self.get_app('notify').notify('Home assistant is down', self.args['speaker'])
+                self.notify('initializing backup script', title='appdaemon: Backup', name='pushbullet')
 
                 # self.turn_off('switch.home_assistant')
 
@@ -30,4 +32,5 @@ class Backup(hass.Hass):
         except Exception as ex:
             print(ex)
 
-#    def toggle_primary(self):
+    def terminate(self):
+        self.log('Terminating Backup App')

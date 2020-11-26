@@ -9,7 +9,6 @@ class LumenActivatedLights(hass.Hass):
         self.threshold = self.args['threshold']
         self.entity = self.args['entity']
 
-        self.log(f"Initialize {self.sensor} Sensor at threshold {self.threshold}")
         self.run_minutely(self.check_lumen, None)
 
         # TODO timeout value if no motion is detected
@@ -21,6 +20,9 @@ class LumenActivatedLights(hass.Hass):
             return
 
         sensor_state = int(self.get_state(self.sensor))
+        self.log(f"{self.sensor} is at {sensor_state}")
+
+        self.notify(f"{self.sensor} is at {sensor_state}", title='appdaemon: illumination', name='pushbullet')
 
         # if the light exceeds the illumination threshold, then turn off.  Otherwise, turn on
         if self.get_state(self.entity) == "on":

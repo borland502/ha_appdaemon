@@ -23,9 +23,6 @@ class Pushbullet(hass.Hass):
                 for dev in devices:
                     print("\t", dev)
 
-                push = await pb.async_push_note(title="Success", body="I did it!")
-                print("Push sent:", push)
-
         except InvalidKeyError as ke:
             print(ke, file=sys.stderr)
             return EXIT_INVALID_KEY
@@ -40,4 +37,6 @@ class Pushbullet(hass.Hass):
             return EXIT_OTHER
 
     async def handle_request(self, data):
-        pass
+        message = data['message']
+        push = await pb.async_push_note(title="Success", body=f"${message}")
+        self.log(push)

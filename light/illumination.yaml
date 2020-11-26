@@ -13,3 +13,11 @@ living_room_sensor:
   entity: light.family_room_fan_light
   threshold: 150
   speaker: cq
+
+bed_room_sensor:
+  module: illumination
+  class: LumenActivatedLights
+  sensor: sensor.illumination_158d00031affd3
+  entity: light.master_bedroom_cq_lamp
+  threshold: 150
+  speaker: cq

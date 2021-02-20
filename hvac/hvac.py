@@ -10,11 +10,11 @@ class HvacSchedule(hass.Hass):
 
         time = datetime.time(20, 0, 0)
         # Schedule a daily callback that will call run_daily() at 10:44 pm every night
-        self.run_daily(self.turn_unit_on_c, time)
+        # self.run_daily(self.turn_unit_on_c, time)
 
         # turn off at 8:00 am every morning
         time = datetime.time(8, 0, 0)
-        self.run_daily(self.turn_unit_off_c, time)
+        # self.run_daily(self.turn_unit_off_c, time)
 
     def turn_unit_on_c(self, kwargs):
         try:
@@ -23,7 +23,7 @@ class HvacSchedule(hass.Hass):
             # Call to Home Assistant to turn the AC on
             self.call_service(
                 "switch/turn_on",
-                entity_id="switch.bedroom_ac"
+                entity_id="switch.bedroom_ac_2"
             )
 
         except Exception as ex:
@@ -35,5 +35,5 @@ class HvacSchedule(hass.Hass):
         # Call to Home Assistant to turn the AC on
         self.call_service(
             "switch/turn_off",
-            entity_id="switch.bedroom_ac"
+            entity_id="switch.bedroom_ac_2"
         )

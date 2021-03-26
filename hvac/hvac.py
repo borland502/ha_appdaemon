@@ -16,8 +16,6 @@ class HvacSchedule(hass.Hass):
         time = datetime.time(8, 0, 0)
         # self.run_daily(self.turn_unit_off_c, time)
 
-        self.notify('hello', name='cq')
-
     def turn_unit_on_c(self, kwargs):
         try:
             self.log("Turning on Bedroom AC")

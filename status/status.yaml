@@ -1,5 +1,11 @@
-status:
+offline_check:
   module: status
   class: OfflineCheck
   entities:
     - light.dining_rm_hall
+
+closed_check:
+  module: status
+  class: ClosedCheck
+  entities:
+    - binary_sensor.door_window_sensor_158d000632c277 # Garage Door
